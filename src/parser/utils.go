@@ -1,6 +1,4 @@
-package utils
-
-import "github.com/HallerPatrick/brainfuck/src/parser"
+package parser
 
 type Stack struct {
 	stack []interface{}
@@ -14,7 +12,7 @@ func NewSourceStack(list []string) Stack {
 	return Stack{stack: stackList}
 }
 
-func NewTokenStack(list []parser.CommandToken) Stack {
+func NewTokenStack(list []CommandToken) Stack {
 	commandList := make([]interface{}, 0)
 	for _, elem := range list {
 		commandList = append(commandList, elem)
@@ -23,7 +21,7 @@ func NewTokenStack(list []parser.CommandToken) Stack {
 }
 
 
-func NewExprStack(list []parser.ExprNode) Stack {
+func NewExprStack(list []ExprNode) Stack {
 	exprList := make([]interface{}, 0)
 	for _, elem := range list {
 		exprList = append(exprList, elem)
@@ -35,11 +33,12 @@ func (stack *Stack) IsEmpty() bool {
 	return len(stack.stack) == 0
 }
 
+// FIFO
 func (stack *Stack) Pop() interface{} {
 	if len(stack.stack) == 0 {
 		panic("Reach EOF while parsing")
 	}
-	elem := stack.stack[len(stack.stack)-1]
-	stack.stack = stack.stack[:len(stack.stack)-1]
+	elem := stack.stack[0]
+	stack.stack = stack.stack[1:]
 	return elem
 }

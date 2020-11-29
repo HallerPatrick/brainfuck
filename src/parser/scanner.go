@@ -48,32 +48,18 @@ var Commands = map[string]CommandToken {
 	Print: PrintToken,
 }
 
-type Stack struct {
-	source []string
-}
-
 func initStack(source string) Stack {
-	return Stack{strings.Split(source, "")}
+	return NewSourceStack(strings.Split(source, ""))
 }
 
-func (stack *Stack) pop() string {
-	elem := stack.source[len(stack.source)-1]
-	stack.source = stack.source[:len(stack.source)-1]
-	return elem
-}
-
-func (stack *Stack) isEmpty() bool {
-	return len(stack.source) == 0
-}
-
-func ParseFromFile(filename string) []CommandToken {
+func ScanFromFile(filename string) []CommandToken {
 	source, err := ioutil.ReadFile(filename)
 
 	if err != nil {
 		panic(err)
 	}
 
-	return Parse(initStack(string(source)))
+	return Scan(initStack(string(source)))
 }
 
 func isCommand(char string) bool {
@@ -85,11 +71,11 @@ func isCommand(char string) bool {
 	return false
 }
 
-func Parse(source Stack) []CommandToken {
+func Scan(source Stack) []CommandToken {
 	var tokens []CommandToken
 
-	for !source.isEmpty() {
-		elem := source.pop()
+	for !source.IsEmpty() {
+		elem := source.Pop().(string)
 		if isCommand(elem) {
 			token := Commands[elem]
 			tokens = append(tokens, token)
